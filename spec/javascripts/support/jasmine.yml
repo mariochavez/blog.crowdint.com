@@ -11,12 +11,8 @@
 #   - dist/**/*.js
 #
 src_files:
-  - public/javascripts/prototype.js
-  - public/javascripts/effects.js
-  - public/javascripts/controls.js
-  - public/javascripts/dragdrop.js
-  - public/javascripts/application.js
-  - public/javascripts/**/*.js
+    - "app/assets/**/*.js"
+    - "app/assets/**/*.coffee"
 
 # stylesheets
 #
@@ -57,6 +53,7 @@ helpers:
 #
 spec_files:
   - '**/*[sS]pec.js'
+  - '**/*[sS]pec.js.coffee'
 
 # src_dir
 #
