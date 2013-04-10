@@ -17,6 +17,7 @@ gem 'gravtastic'
 gem 'newrelic_rpm'
 gem 'quiet_assets'
 gem 'sunspot_rails'
+gem 'sunspot_solr'
 gem 'unicorn'
 gem 'yui-compressor'
 
@@ -48,7 +49,6 @@ group :development, :test do
   gem 'launchy'
   gem 'rspec-rails'
   gem 'spork'
-  gem 'sunspot_solr'
   gem 'sqlite3'
   gem 'taps'
 end
