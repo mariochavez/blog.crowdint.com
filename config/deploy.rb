@@ -13,6 +13,7 @@ server = ENV['CAP_SERVER']
 
 set :repository,  "git@github.com:crowdint/blog.crowdint.com.git"
 set :git_shallow_clone, 1
+set :branch, 'new_home'
 
 set :application, "blog.crowdint.com"
 set :user, "blog-crowdint-com"
@@ -35,7 +36,7 @@ set :default_environment, {
 
 namespace :deploy do
   task :database_config do
-    run "ln -s #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+    run "ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
   end
 
   namespace :assets do
@@ -48,6 +49,38 @@ namespace :deploy do
   end
 end
 
+namespace :solr do
+  task :symlink do
+    run "ln -s #{shared_path}/solr #{latest_release}/solr"
+  end
+
+  task :start do
+    run <<-CMD
+    cd -- #{latest_release} &&
+    #{rake} RAILS_ENV=#{rails_env.to_s.shellescape} sunspot:solr:start
+    CMD
+  end
+
+  task :stop do
+    run <<-CMD
+    cd -- #{latest_release} &&
+    #{rake} RAILS_ENV=#{rails_env.to_s.shellescape} sunspot:solr:stop
+    CMD
+  end
+
+  task :reindex do
+    run <<-CMD
+    cd -- #{latest_release} &&
+    #{rake} RAILS_ENV=#{rails_env.to_s.shellescape} sunspot:solr:reindex
+    CMD
+  end
+end
+
+
 before "deploy:assets:precompile", "deploy:database_config"
 after 'deploy:restart', 'unicorn:reload' # app IS NOT preloaded
 after 'deploy:restart', 'unicorn:restart'  # app preloaded
+
+after "deploy:database_config", "solr:symlink"
+after "solr:symlink", "solr:stop"
+after "solr:symlink", "solr:start"
